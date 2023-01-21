@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>
+		烟花模拟器
+	</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="theme-color" content="#000000">
+	<link rel="shortcut icon" type="image/png"
+		href="https://fireworks.nianbroken.top/NianBrokenStorage/images/favicon.png">
+	<link rel="icon" type="image/png" href="https://fireworks.nianbroken.top/NianBrokenStorage/images/favicon.png">
+	<link rel="apple-touch-icon-precomposed"
+		href="https://fireworks.nianbroken.top/NianBrokenStorage/images/favicon.png">
+	<meta name="msapplication-TileColor" content="#000000">
+	<meta name="msapplication-TileImage"
+		content="https://fireworks.nianbroken.top/NianBrokenStorage/images/favicon.png">
+	<link href="https://fireworks.nianbroken.top/NianBrokenStorage/fonts/css.css" rel="stylesheet">
+	<link rel="stylesheet" href="./style.css">
+
+
+	<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+	<script src="./js/jquery.danmu.min.js"></script>
+</head>
+
+<body>
+	<!-- partial:index.partial.html -->
+	<!-- SVG Spritesheet -->
+	<div style="height: 0; width: 0; position: absolute; visibility: hidden;">
+		<svg xmlns="http://www.w3.org/2000/svg">
+			<symbol id="icon-play" viewBox="0 0 24 24">
+				<path d="M8 5v14l11-7z" />
+			</symbol>
+			<symbol id="icon-pause" viewBox="0 0 24 24">
+				<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+			</symbol>
+			<symbol id="icon-close" viewBox="0 0 24 24">
+				<path
+					d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+			</symbol>
+			<symbol id="icon-settings" viewBox="0 0 24 24">
+				<path
+					d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+			</symbol>
+			<symbol id="icon-sound-on" viewBox="0 0 24 24">
+				<path
+					d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+			</symbol>
+			<symbol id="icon-sound-off" viewBox="0 0 24 24">
+				<path
+					d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+			</symbol>
+		</svg>
+	</div>
+	<!-- App -->
+	<div class="container">
+		<div class="loading-init">
+			<div class="loading-init__header">
+				加载中
+			</div>
+			<div class="loading-init__status">
+				正在装配烟花
+			</div>
+		</div>
+		<div class="stage-container remove">
+			<div class="canvas-container">
+				<canvas id="trails-canvas">
+				</canvas>
+				<canvas id="main-canvas">
+				</canvas>
+			</div>
+			<div class="controls">
+				<div class="btn pause-btn">
+					<svg fill="white" width="24" height="24">
+						<use href="#icon-pause" xlink:href="#icon-pause">
+						</use>
+					</svg>
+				</div>
+				<div class="btn sound-btn">
+					<svg fill="white" width="24" height="24">
+						<use href="#icon-sound-off" xlink:href="#icon-sound-off">
+						</use>
+					</svg>
+				</div>
+				<div class="btn settings-btn">
+					<svg fill="white" width="24" height="24">
+						<use href="#icon-settings" xlink:href="#icon-settings">
+						</use>
+					</svg>
+				</div>
+
+			</div>
+			<div class="danmu">
+				<!--黑背景和弹幕区-->
+				<div id="danmuarea">
+					<div id="danmu">
+					</div>
+				</div>
+			</div>
+			<!--控制区-->
+			<div class="ctr">
+				显示弹幕:<input type='checkbox' checked='checked' id='ishide' value='is' onchange='changehide()'>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				弹幕透明度:
+				<input type="range" name="op" id="op" onchange="op()" value="100">
+				<br>
+				发弹幕:
+				<select name="color" id="color">
+					<option value="white">白色</option>
+					<option value="red">红色</option>
+					<option value="green">绿色</option>
+					<option value="blue">蓝色</option>
+					<option value="yellow">黄色</option>
+				</select>
+				<select name="size" id="text_size">
+					<option value="1">大文字</option>
+					<option value="0">小文字</option>
+				</select>
+				<select name="position" id="position">
+					<option value="0">滚动</option>
+					<option value="1">顶端</option>
+					<!-- <option value="2">底端</option> -->
+				</select>
+				<!-- <br/> -->
+				<input type="textarea" id="text" max=300 />
+				<button type="button" onclick="send()">发送</button>
+			</div>
+			<div class="menu hide">
+				<div class="menu__inner-wrap">
+					<div class="btn btn--bright close-menu-btn">
+						<svg fill="white" width="24" height="24">
+							<use href="#icon-close" xlink:href="#icon-close">
+							</use>
+						</svg>
+					</div>
+					<div class="menu__header">
+						设置
+					</div>
+					<div class="menu__subheader">
+						若想了解更多信息 请点击任意标签
+					</div>
+					<form>
+						<div class="form-option form-option--select">
+							<label class="shell-type-label">
+								烟花类型
+							</label>
+							<select class="shell-type">
+							</select>
+						</div>
+						<div class="form-option form-option--select">
+							<label class="shell-size-label">
+								烟花大小
+							</label>
+							<select class="shell-size">
+							</select>
+						</div>
+						<div class="form-option form-option--select">
+							<label class="quality-ui-label">
+								画质
+							</label>
+							<select class="quality-ui">
+							</select>
+						</div>
+						<div class="form-option form-option--select">
+							<label class="sky-lighting-label">
+								照亮天空
+							</label>
+							<select class="sky-lighting">
+							</select>
+						</div>
+						<div class="form-option form-option--select">
+							<label class="scaleFactor-label">
+								缩放
+							</label>
+							<select class="scaleFactor">
+							</select>
+						</div>
+						<div class="form-option form-option--checkbox">
+							<label class="auto-launch-label">
+								自动放烟花
+							</label>
+							<input class="auto-launch" type="checkbox" />
+						</div>
+						<div class="form-option form-option--checkbox form-option--finale-mode">
+							<label class="finale-mode-label">
+								同时放更多的烟花
+							</label>
+							<input class="finale-mode" type="checkbox" />
+						</div>
+						<div class="form-option form-option--checkbox">
+							<label class="hide-controls-label">
+								隐藏控制按钮
+							</label>
+							<input class="hide-controls" type="checkbox" />
+						</div>
+						<div class="form-option form-option--checkbox form-option--fullscreen">
+							<label class="fullscreen-label">
+								全屏
+							</label>
+							<input class="fullscreen" type="checkbox" />
+						</div>
+						<div class="form-option form-option--checkbox">
+							<label class="long-exposure-label">
+								保留烟花的火花
+							</label>
+							<input class="long-exposure" type="checkbox" />
+						</div>
+					</form>
+					<div class="credits">
+						<p class="copyright">
+							您的IP：
+							<script src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
+							<script type="text/javascript">
+								document.write(returnCitySN["cip"])
+							</script>
+							<br />
+							<!-- <script>
+									var mydate = new Date();
+									document.writeln("Copyright&nbsp;&copy;&nbsp;2021 - " + mydate.getFullYear() + '&nbsp;<a target="_blank" href="https://www.nianbroken.top/">碎念_Nian</a><br />All&nbsp;Rights&nbsp;Reserved');
+								</script> -->
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="help-modal">
+			<div class="help-modal__overlay">
+			</div>
+			<div class="help-modal__dialog">
+				<div class="help-modal__header">
+				</div>
+				<div class="help-modal__body">
+				</div>
+				<button type="button" class="help-modal__close-btn">
+					关闭
+				</button>
+			</div>
+		</div>
+	</div>
+	<!-- partial -->
+	<script src='https://fireworks.nianbroken.top/NianBrokenStorage/js/fscreen.js'></script>
+	<script src='https://fireworks.nianbroken.top/NianBrokenStorage/js/Stage.js'></script>
+	<script src='https://fireworks.nianbroken.top/NianBrokenStorage/js/MyMath.js'></script>
+	<script src="https://fireworks.nianbroken.top/NianBrokenStorage/js/script.js"></script>
+
+	<script>
+		//初始化
+		$("#danmu").danmu({
+			left: 0,
+			top: 0,
+			height: "100%",
+			width: "100%",
+			speed: 20000,
+			opacity: 1,
+			font_size_small: 16,
+			font_size_big: 24,
+			top_botton_danmu_time: 6000
+		});
+		query(); //  从后端获取弹幕并添加
+
+		//再添加三个弹幕
+		$("#danmu").danmu("addDanmu", [
+			// 顶部弹幕 6个一组
+			// 顶部组一
+			{
+				text: "日迈月征，朝暮轮转。 愿新年胜旧年，欢愉且胜意，万事尽可期。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 10
+			}, {
+				text: "长路漫漫，终有归途。 这路遥马急的人间，你我平安喜乐就好。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 20
+			}, {
+				text: "新的一年，唯愿： 命途风霜尽，乾坤气象和， 历添新岁月，福满旧山河。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 30
+			}, {
+				text: "我托人间寄讯， 邀雪称庆， 为你捎来清佳冬令。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 40
+			}, {
+				text: "新年伊始，喜乐长安。 2023， 借着这烟火的光亮， 做个温暖的人， 不卑不亢，清澈善良。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 50
+			}, {
+				text: "一元复始，旭日始旦。 希望2023的日子里，三餐四季，温柔有趣。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 60
+			}, {
+				text: "凡是过往，皆为序章。 新的一年，愿日子如熹光，温柔又安详。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 20
+			}, {
+				text: "2022年，愿你我赤诚且勇敢，欣喜也在望。 爱的人，都喜乐如常。盼的事，都归于心上。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 30
+			}, {
+				text: "我与旧事归于尽，新年依旧迎花开。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 40
+			}, {
+				text: "春日宴，绿酒一杯歌一遍。再拜陈三愿: 一愿郎君千岁，二愿妾身长健，三愿如同梁上燕，岁岁常相见。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 50
+			}, {
+				text: "祝新的一年： 以渺小启程，以伟大结尾， 与朝暮同行，和岁月并往，和爱的人一同行至天光。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 60
+			}, {
+				text: "这一年，疫情、网课、口罩、返校、期待、失望、后悔、看淡、感恩、学校、上班、下班， 我与旧事归于尽，来年依旧迎花开。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 30
+			}, {
+				text: "新年愿望： 樱花变爆米花，有人赚钱给我花。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 40
+			}, {
+				text: "满怀上一年的热爱，奔赴下一年的山海。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 50
+			}, {
+				text: "唯愿心中光明进一寸，眼前黑暗退一分",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 60
+			}, {
+				text: "看清人性，依然保持宽容；有人追随，依旧保持独立；身临困境，依然勇敢生活； 惟愿做自己，常喜乐，能释怀，知休息，开怀拥抱一切美好。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 40
+			}, {
+				text: "家人围坐，烛光可亲;三餐烟火暖，四季皆安然； 新火试新茶，诗酒趁年华。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 50
+			}, {
+				text: "此时此刻，华灯初上，万家团圆。 新年将至，唯愿山河锦绣，国泰民安。 唯愿和顺致祥，幸福美满。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 60
+			}, {
+				text: "春节临兮，眉目笑兮，身影倩兮，快乐愿兮， 信息转兮，幸福传兮，勿忘我兮，友谊念兮， 时刻忆兮，牢牢记兮，新年乐兮，呜呼!岂不美兮!",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 50
+			}, {
+				text: "裁雪为画，揉风作诗。 愿岁月温柔，点点滴滴成全人间悲喜； 愿你毕生欢愉，朝朝暮暮造就星河奔腾。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 60
+			}, {
+				text: "新的一年，愿大家都能万事随想，所爱如山，从此眼底是绮丽，周遭是晴朗，嘴角是笑意，耳畔是阜盛烟火，心上凛冬散尽，星河长明。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 60
+			},
+
+
+			// 顶部组二
+			{
+				text: "日迈月征，朝暮轮转。 愿新年胜旧年，欢愉且胜意，万事尽可期。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 110
+			}, {
+				text: "2023年祝我们都：平安健康，前兔似锦，扬眉兔气 ，大展宏兔 ，兔飞猛进，前兔无量 ，新年好运，兔年大吉。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 120
+			}, {
+				text: "新的一年里，你的幸福将是连续的，快乐是递增的，生活是不单调的，希望是无穷的。祝您新年快乐！",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 130
+			}, {
+				text: "红梅迎春至，玉兔送喜来。祝你在新的一年里“兔”飞猛进财源广，前“兔”光明事事顺。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 140
+			}, {
+				text: "辞旧送吉虎，迎新接玉兔。玉兔一蹦财气高，玉兔二蹦身体好，玉兔三蹦福气照。福气照君颜，祥瑞共平安。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 150
+			}, {
+				text: "给你兔兔的祝福，兔兔的甜蜜，兔兔的运气，兔兔的健康，兔兔的快乐，兔兔的心情，兔兔的欣慰，兔兔的顺利，兔兔的幸福，兔兔的人生！",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 160
+			}, {
+				text: "愿奔赴的前方，皆是荣光万丈；回首的身后，皆能温暖安康。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 120
+			}, {
+				text: "去年很好，希望今年也是，即使年年不见，也要岁岁平安，兔年大吉！",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 130
+			}, {
+				text: "一年一岁一光景，匆匆岁月时时安。除夕之夜，辞别旧岁，愿你在新的一年，家人常伴，岁婉心和，静处长安！",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 140
+			}, {
+				text: "时光未歇，繁华焕彩，一岁一年，熠熠生辉。今夕家家逢万喜，朝日岁岁多胜意。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 150
+			}, {
+				text: "2023属你最行，兔年有爱情，幸福永不停。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 160
+			}, {
+				text: "金兔吐信祥云开，载歌载舞春同在。 携家人衷心祝愿您及全家新年快乐!幸福安康!",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 130
+			}, {
+				text: "山高有行路，水深有渡舟。和气作春妍，新年胜旧年。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 140
+			}, {
+				text: "新的一年，祝你“钱兔“无量，“兔“然暴富，“兔”飞猛进，兔年顶呱呱。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 150
+			}, {
+				text: "新的一年祝大家兔年大吉，兔耳冲天！动如脱兔！",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 160
+			}, {
+				text: "一年一岁一光景，匆匆岁月时时安。除夕之夜，辞别旧岁，愿你在新的一年，家人常伴，岁婉心和，静处长安！",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 140
+			}, {
+				text: "岁末将至，新年踏歌而来。愿兔年新春新岁，吉吉利利，百事都如意。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 150
+			}, {
+				text: "璀璨流年，醉梦烟火，除夕之夜，全家合欢，觥筹交盏，围炉守岁并年华，团团圆圆，灯火可亲，幸福年年。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 160
+			}, {
+				text: "愿新年，存远志，常读书，乐交友，惜四时。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 150
+			}, {
+				text: "金兔纳福，人和年丰，愿新的一年日子如熹光，温柔又安详。盼的事，归于心上。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 160
+			}, {
+				text: "凛冬散尽，星河长明，兔年新春，万事顺遂。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 160
+			},
+
+
+			// 顶部组三
+			{
+				text: "时光似箭辞旧去，岁月匆匆迎新来。心向阳光逐梦想，静待兔年福满怀！",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 210
+			}, {
+				text: "2023兔年，愿你我赤诚且勇敢，欣喜也在望。爱的人，都喜乐如常。盼的事，都归于心上。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 220
+			}, {
+				text: "一岁有一岁的味道，一站有一站的风景，期待在新的日子里，烟火星辰，所愿皆成真。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 230
+			}, {
+				text: "新的一年，愿日子如熹光，温柔又安详，你我赤诚且勇敢，欣喜也在望。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 240
+			}, {
+				text: "新的一年，愿有人问你粥可温，愿有人陪你立黄昏；愿你往后路途，深情不再枉付；愿你的眼睛，只看得到笑容。愿你夜里有灯，梦里有人；愿你平安喜乐，得偿所愿。愿你出走半生，归来仍是少年。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 250
+			}, {
+				text: "兔年耳长长，招运进宝；兔年眼圆圆，风光无限；兔年腿蹦蹦，事业上冲；兔年尾短短，烦恼不见；兔年唇三瓣，快乐无限；兔年身白白，鸿运不歇；兔年舌舔舔，新年如愿！",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 260
+			}, {
+				text: "兔儿蹦兔儿跳，新年鸿运到；兔儿欢兔儿笑，新年身体好；兔儿睡得香，出门贵人帮；兔儿耳朵长，万事都吉祥；祝新年快乐，新年吉祥！",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 220
+			}, {
+				text: "新生活、新气象，年增岁月人增寿，快马加鞭搞建设，乐在其中。衷心祝愿您：兔年吉祥！兔年走鸿运！兔年展宏图！牛气冲云天！",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 230
+			}, {
+				text: "2023年，春节快乐！新岁序开，同赴新程祝愿大家:大展宏“兔”，钱“兔”似锦，扬眉“兔”气，“兔”个健康！",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 240
+			}, {
+				text: "2023祝所有长的好看的顺顺当当，健健康康，兔飞猛进，余额爆涨。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 250
+			}, {
+				text: "2023年愿你:凡事兴盛，身体健壮，灵魂兴盛，忘记背后，努力向前，前途无量。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 260
+			}, {
+				text: "兔个吉利、兔然暴富，兔年吉祥、钱兔无量、大展宏兔、开启好运兔年。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 230
+			}, {
+				text: "新的一年 ，祝你 钱“兔”无忧 、钱“兔”似锦 、“兔”然暴富 、大展宏“兔” 好事成“兔”。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 240
+			}, {
+				text: "疫情终会消散，巨变终归平静；长夜凝结的露珠，终将折射新年晨光。2023，你好春天！",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 250
+			}, {
+				text: "2023我要做自己，不够好也没关系。从不妄自菲薄，惟愿健康快乐。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 260
+			}, {
+				text: " 2023所有的日子都来吧，可读书、可远足，可抚琴、可品茗，可作画、可礼茶，心之所向，奋力以往；旧疾当愈，岁月常新。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 240
+			}, {
+				text: "光阴荏苒，四季流转，新春伊始，万象更新。心心念念的远方，不再停留在纸上；纵然岁月无常，无碍乘风破浪。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 250
+			}, {
+				text: "梦狂奔，不负热爱；眼底尽收沿途美景，穿越风雨焕然一新；愿2023所有的奔赴都有美好结局。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 260
+			}, {
+				text: "兔兔生威、龙精兔猛、兔背熊腰、如兔添翼、龙吟兔啸、兔兔生风、龙蟠兔踞、龙腾兔跃、兔头兔脑、龙兄兔弟、生龙活兔、藏龙卧兔。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 250
+			}, {
+				text: "新年大吉新春如意！祝你财源滚滚，发得像肥兔；身体棒棒，壮得像兔熊；爱情甜甜，美得像蜜蜂；好运连连，多得像兔毛！新年大吉新春如意快乐！",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 260
+			}, {
+				text: "送你一朵小红花， 来年多喜樂。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 260
+			},
+
+
+			// 顶部组四
+			{
+				text: "愿新的一年,仍有阳光满路,温暖如初。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 310
+			}, {
+				text: "兔个吉利、兔然暴富，兔年吉祥、钱兔无量、大展宏兔、开启好运兔年。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 320
+			}, {
+				text: "新的一年，愿你万事随想，所爱如山。从此眼底是绮丽，周遭是晴明，嘴角是笑意，耳畔是阜盛烟火，心上凛冬散尽，星河长明。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 330
+			}, {
+				text: "新的一年，祝你温柔，祝你坚定，祝你独当一面，祝你勇往直前，祝你可爱，祝你幸福，祝你健健康康，祝你兔年大吉。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 340
+			}, {
+				text: "愿新年胜旧年，岁岁长安，皆有所盼。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 350
+			}, {
+				text: "年年有风，风吹年年，慢慢及漫漫。祝旧愿皆已偿，来年有新愿。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 360
+			}, {
+				text: "愿兔年,胜旧年,有趣、有盼、无灾、无难。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 320
+			}, {
+				text: "我看见前方黑暗的尽头，有光在等着我。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 330
+			}, {
+				text: "希望2023有趣，有盼，无灾，无难。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 340
+			}, {
+				text: "飞越千山，跨过万水，也要回到你的身边。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 350
+			}, {
+				text: "过年去吃热气腾腾的美食，和家人看春节联欢晚会，和喜欢的人看烟花，和好朋友聚在一起。总之又是新的开始，希望能继续保持你的善良，你的温柔，你的美好。我们都是很好的人，我们都会获得更好。新年快乐。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 360
+			}, {
+				text: "新年想和你一起看雪，也想和雪一起看你。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 330
+			}, {
+				text: "重新上路，从心出发。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 340
+			}, {
+				text: "新的一年，除了暴富以外，还可以抱抱我哦。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 350
+			}, {
+				text: "不知不觉又迎来了新的一年，与去年一样还是那么的美，只是耳边少了你的耳语，身边少了你的身影。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 360
+			}, {
+				text: "新的一年，新的开始；心的祝福，新的起点。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 340
+			}, {
+				text: "我和你跨过分秒，愿也可跨过余生岁月。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 350
+			}, {
+				text: "新生活正徐徐展开，以此轮皎洁的明月，共祝我们拥有长久的欢喜与美梦。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 360
+			}, {
+				text: "再见2022，2023，夹着皮囊，负重前行。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 350
+			}, {
+				text: "凡事总要有信心，老想着行。要是做一件事，先就担心着怕咱不行吧，那你就没有勇气了。再见2022，你好2023。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 360
+			}, {
+				text: "花开花谢，此消彼长，云卷云舒，又是一年。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 360
+			},
+
+
+			// 顶部组五
+			{
+				text: "若能再来一杯酒，可以让我原谅所有伤害我的人，可以让我忘了伤痛，可以让我不再受伤的，那我喝多了几杯!",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 410
+			}, {
+				text: "往后的日子是崭新的，谁也别回头看了。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 420
+			}, {
+				text: "跨年夜，你有没有一个想见却见不到的人。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 430
+			}, {
+				text: "2023新年快乐，现在许愿还灵嚒，不管了写下自己的新年愿望吧。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 440
+			}, {
+				text: "想扔的东西扔了，想断的关系断了，新的一年，别再犹豫。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 450
+			}, {
+				text: "一觉醒来时，我将会成为新世界的一部分。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 460
+			}, {
+				text: "祝你我此生，梦想光芒，野蛮生长，永不彷徨，新年快乐。",
+				color: "yellow",
+				size: 1,
+				position: 1,
+				time: 420
+			}, {
+				text: "愿你新年有心愿，旧愿皆已偿。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 430
+			}, {
+				text: "新年头像从头开始，好运从微信头像开始。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 440
+			}, {
+				text: "迷茫了一年，啥也没做成，马上就要到各路人马总结这一年自己多牛逼多牛逼的时候了，我就默默的看着，2023年加油!",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 450
+			}, {
+				text: "我们都要重新开始，努力成为更好的自己!",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 460
+			}, {
+				text: "如果所有人都祝你新年快乐，那我祝你遍历山河仍觉得人间值得。",
+				color: "red",
+				size: 1,
+				position: 1,
+				time: 430
+			}, {
+				text: "万物更新，旧疾当愈，长安常安。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 440
+			}, {
+				text: "把酒碰盏，谢诸君伴。提笔蕴词，愿各友康。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 450
+			}, {
+				text: "此时此刻，华灯初上，万家团圆。 新年将至，惟愿山河锦绣，国泰民安。 惟愿和顺致祥，幸福美满。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 460
+			}, {
+				text: "祝我岁岁常欢愉，祝你年年皆胜意。",
+				color: "green",
+				size: 1,
+				position: 1,
+				time: 440
+			}, {
+				text: "去岁千般皆如意，今年万事定称心。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 450
+			}, {
+				text: "良辰吉时时时有，锦瑟年华岁岁拥。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 460
+			}, {
+				text: "望眉目有山河,清澈明朗。 愿心中有丘壑,一往无前。 新春快乐,万事胜意。",
+				color: "blue",
+				size: 1,
+				position: 1,
+				time: 450
+			}, {
+				text: "家人闲坐,灯火可亲。新年伊始,万象更新。愿所念之人,平安喜乐。愿所想之事,顺心如意。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 460
+			}, {
+				text: "岁末将至,敬颂冬绥。 平安喜乐,万事胜意。 岁岁常欢愉,年年皆胜意。",
+				color: "white",
+				size: 1,
+				position: 1,
+				time: 460
+			},
+
+
+			// 滚动弹幕
+			{
+				text: "愿你夜里有灯，梦里有人，平安喜乐，得偿所愿。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 10
+			}, {
+				text: "愿你漂泊万里河山，归来依旧一汪碧泉。愿你阅览千态人间，归来不改眉目清浅。愿你踏破百丈红尘，归来仍是翩翩少年。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 20
+			}, {
+				text: "希望星辰和大海你都会看到，美好的一切你都会拥有。愿新年好！",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 30
+			}, {
+				text: "凛冬散尽，星河长明。 新的一年，万事顺遂。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 40
+			}, {
+				text: "朝朝暮暮里，祝愿我们每个人都能沉淀过往，迎来新光，找到生生不息的热爱和梦想。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 50
+			}, {
+				text: "在这岁末将至忙碌时光的罅隙，看着眼前熙攘的人群，我突然对新的一年充满了期待。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 60
+			}, {
+				text: "新的一年，会有始料不及的运气，会有突如其来的欢喜。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 70
+			}, {
+				text: "日迈月征，朝暮轮转。愿新年胜旧年，欢愉且胜意，万事皆可期。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 80
+			}, {
+				text: "新年，愿心纳吉，万事欣，岁安平。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 90
+			}, {
+				text: "愿新的一年，仍有阳光满路，温暖如初。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 100
+			},
+			{
+				text: "年年有风，风吹年年，慢慢即漫漫。祝旧愿皆已偿，来年有新愿。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 110
+			}, {
+				text: "新的一年，愿大家都能万事随想，所爱如山。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 120
+			}, {
+				text: "昨日虚浮终有别，明朝新益智财升，新年快乐！",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 130
+			}, {
+				text: "愿山高有行路，水深有渡舟。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 140
+			}, {
+				text: "希望你更多体验，更多成长。世界辽阔，祝你闪闪发光。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 150
+			}, {
+				text: "前方，柔光万丈；身后，温暖一方，新年快乐！",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 160
+			}, {
+				text: "今年也要做一个只记得快乐、温暖、感动和有知识点的人！",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 170
+			}, {
+				text: "愿新春以后，吉吉利利，百事都如意",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 180
+			}, {
+				text: "祝你此生，梦想光芒，野蛮生长，永不彷徨，新年快乐！",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 190
+			}, {
+				text: "新年第一天，祝你平安健康第一，家庭和谐第一，开心快乐第一",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 200
+			},
+			{
+				text: "春日宴,绿酒一杯歌一遍。再拜陈三愿,一愿郎君千岁,二愿妾身常健,三愿如同梁上燕,岁岁常相见。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 210
+			}, {
+				text: "祝您永远快乐健康，笑在眉头喜在心头，福寿绵绵，长命百年！",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 220
+			}, {
+				text: "神爽朗，骨清坚。从今把定春风笑，且作人间长寿仙。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 230
+			}, {
+				text: "福启新岁，万事顺遂。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 240
+			}, {
+				text: "岁月常新，美好常在。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 250
+			}, {
+				text: "良辰吉日时时有，锦瑟年华岁岁拥。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 260
+			}, {
+				text: "旧岁千般皆如意，新年万事定称心。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 270
+			}, {
+				text: "辞暮尔尔，烟火年年，朝朝暮暮，岁岁平安。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 280
+			}, {
+				text: "家人闲做，灯火可亲，新年伊始，喜乐安宁。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 290
+			}, {
+				text: "岁序更替，华章日新。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 300
+			},
+			{
+				text: "共欢新故岁，迎送一宵中。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 310
+			}, {
+				text: "律回春渐，新元肇启，烟火照夜白。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 320
+			}, {
+				text: "路遥马急人间路，平安喜乐即幸福。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 330
+			}, {
+				text: "过尽千帆仍有梦，眉眼清扬是少年，恭贺新禧。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 340
+			}, {
+				text: "纵使人潮汹涌，光阴似箭，愿所有的驰聘，最终都奔向团圆。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 350
+			}, {
+				text: "万事如意，心想事成。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 360
+			}, {
+				text: "你好好发光，我好好努力，你万丈光芒，我努力跟上。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 370
+			}, {
+				text: "就地过年，情深不减，心在一起，就是新年。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 380
+			}, {
+				text: "门上的福字倒贴了，家里的亲人都到了。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 390
+			}, {
+				text: "四时平安，万物可爱，万事尽可期待。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 400
+			},
+			{
+				text: "新年好运，齐头并进。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 410
+			}, {
+				text: "当时间的齿轮轻轻转动，当历史悄然翻开新篇，当元旦的钟声准时响彻天涯，新的一年，如约而至，2023，新年快乐！",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 420
+			}, {
+				text: "你好我好，世界更好。总而言之，知足最好。这条信息，真的很好，不发给你们，是我不好，祝元旦快乐!",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 430
+			}, {
+				text: "一个心愿，开开心心，一声祈祷，幸幸福福，一份问候，健健康康，一句祝福，平平安安，一条微信，传递友情，新的一年已到，愿你我快乐。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 440
+			}, {
+				text: "新年第一天，感谢勇往直前的自己。2023年继续努力奔跑，勇于追梦，用奋斗去书写新的篇章。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 450
+			}, {
+				text: "新年要有新气象，2023，请你放下过去的遗憾，释怀昨日的过错，满怀希望，开启人生新篇章。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 460
+			}, {
+				text: "愿你所求皆如愿，所行化坦途，多喜乐，常安宁。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 470
+			}, {
+				text: "愿你成长，愿你落落大方，枯木逢春，不负众望。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 480
+			}, {
+				text: "愿颠覆平庸，肆意生长。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 490
+			}, {
+				text: "希望你与幸运撞个满怀，不论去哪儿，沿途都是风景。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 500
+			},
+
+
+			{
+				text: "愿你遇良人，予你欢喜城，长歌暖浮生。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 15
+			}, {
+				text: "愿你的人生耀眼如白昼，灿烂若星辰。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 25
+			}, {
+				text: "希望你眼眸有星辰，心中有山海，从此以梦为马，不负韶华。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 35
+			}, {
+				text: "祝你们信念生根，但灵魂自在，往后人生道路宽广，途经的每一个夏天，都草木葱茏，满目生机",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 45
+			}, {
+				text: "愿你的生命有够多的云翳，造成一个美丽的黄昏。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 55
+			}, {
+				text: "愿你野蛮生长，最终璀燦生光。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 65
+			}, {
+				text: "愿你人间这一遭，圆满了三界六道，看过了是非哭笑，从此天涯海角，皆是逍遥。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 75
+			}, {
+				text: "希望你继续兴致盎然的与世界交手，一直走在充满鲜花的道路。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 85
+			}, {
+				text: "愿你如愿遇到生命中的缘分，不早也不晚，不急也不缓。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 95
+			}, {
+				text: "愿你一生有山可靠，有树可栖。与心爱之人，春赏花，夏纳凉。秋登山，冬扫雪。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 105
+			},
+			{
+				text: "愿你走完山水万城，仍与理想重逢。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 115
+			}, {
+				text: "愿神明偏爱，一切从欢。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 125
+			}, {
+				text: "希望你每天早晨起来，整个世界都是一份打开的、闪闪发光的巨大礼物。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 135
+			}, {
+				text: "愿你此去星辰大海，前程锦绣如画！",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 145
+			}, {
+				text: "愿你有一个灿烂的前程，愿你有情人终成眷属，愿你在尘世获得幸福。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 155
+			}, {
+				text: "愿你往后余生全是玫瑰和喝彩。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 165
+			}, {
+				text: "愿你崭新的时光通透温热。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 175
+			}, {
+				text: "愿你所到之处皆为热土，愿你所遇之人皆为挚友；愿你余生不负忧，自在如风常欢笑。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 185
+			}, {
+				text: "愿所得皆所期，所失皆无碍。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 195
+			}, {
+				text: "愿你一切都好，所有俗套的祝福语都在你身上灵验。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 205
+			},
+			{
+				text: "愿与你一同行至天光，万事顺遂毫无蹉跎，来日经年心中常乐，历遍山河人间值得。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 215
+			}, {
+				text: "愿你的未来纯净明朗，像你此刻的可爱目光，在世间美好的命运中，愿你的命运美好欢畅。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 225
+			}, {
+				text: "愿所有的欢乐都陪伴着你，仰首是春，俯首是秋；愿所有的幸福都追随着你，月圆是画， 月缺是诗。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 235
+			}, {
+				text: "愿你以后的人生 享享清福 闹闹脾气 做做指甲 买买包包 顺便美得一塌糊涂。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 245
+			}, {
+				text: "岁岁长欢愉，万事皆胜意。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 255
+			}, {
+				text: "愿你无忧无疾百岁安生不离笑，盼你春暖花开一生喜乐幸福绕。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 265
+			}, {
+				text: "愿你一路多些坦途，少些曲折，多些喜悦，少些愁苦。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 275
+			}, {
+				text: "祝爱情和自尊两全，祝所有想触碰却又缩回的手，最终都紧紧牵在一起。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 285
+			}, {
+				text: "愿你被这个世界温柔对待，行你所行，爱你所爱，追求你要的自由，无问西东。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 295
+			}, {
+				text: "一愿识尽天下好人，二愿读尽世间好书，三愿看尽世间好山水。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 305
+			},
+			{
+				text: "愿你前程似锦，不虚余生。愿你梦无虚妄，不惧风霜。愿你世事洞明，不与相争。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 315
+			}, {
+				text: "愿你所有的日子，都比不上明天的光辉。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 325
+			}, {
+				text: "愿你被这个世界温柔以待，躲不过的惊吓都只是一场虚惊，收到的欢喜从无空欢喜。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 335
+			}, {
+				text: "愿你所爱之人，不仅懂你的言外之意，更懂你的欲言又止。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 345
+			}, {
+				text: "人生匆匆，愿我们共享光荣，愿我们的梦想永不落空。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 355
+			}, {
+				text: "愿你所得过少时，不会终日愤愤；愿你所得过多时，不必终日惶恐。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 365
+			}, {
+				text: "愿前路浩浩荡荡，万事尽可期待。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 375
+			}, {
+				text: "但愿这漫长渺小的人生不负你每个光辉时分。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 385
+			}, {
+				text: "愿你春赏繁樱，夏观夜星，秋见霜菊，冬遇初雪，在人间的扬尘里，只看得见美事。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 395
+			}, {
+				text: "祝你不用奔赴大海，也能春暖花开。祝你不用颠沛流离，也能遇到陪伴。祝你不用熬过黑夜，已经等到晚安。如果这些都很难，祝你平平安安。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 405
+			},
+			{
+				text: "愿你我带着最微薄的行李和最丰盛的自己在世间流浪，有梦为马，随处可栖",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 415
+			}, {
+				text: "我尽可能地把这一生所有的祝福都送给你，当作你以后漫漫人生路上的噩运消灭卡，当然，我希望你一生顺遂。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 425
+			}, {
+				text: "愿你长成厉害的大人和永远万事胜意的少年。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 435
+			}, {
+				text: "唯愿你 常开心 常欣喜；有趣 有盼 无灾 无难。",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 445
+			}, {
+				text: "愿你美酒轻裘，挑灯走马，一生无牵挂。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 455
+			}, {
+				text: "愿君长似少年时，初心不忘乐相知。",
+				color: "blue",
+				size: 1,
+				position: 0,
+				time: 465
+			}, {
+				text: "愿一切为之努力的事情在日后都有一个浪漫的结果。",
+				color: "white",
+				size: 1,
+				position: 0,
+				time: 475
+			}, {
+				text: "愿你可以永远横冲直撞，哪怕头破血流，也要爱憎分明、哭笑任之，一如年少时的模样。",
+				color: "yellow",
+				size: 1,
+				position: 0,
+				time: 485
+			}, {
+				text: "愿你成为自己喜欢的样子：不抱怨，不将就，有自由，有光芒。	",
+				color: "red",
+				size: 1,
+				position: 0,
+				time: 495
+			}, {
+				text: "愿成长，愿落落大方，愿不负众望。",
+				color: "green",
+				size: 1,
+				position: 0,
+				time: 505
+			},
+		]);
+		//一个定时器，监视弹幕时间并更新到页面上
+		function timedCount() {
+			$("#time").text($('#danmu').data("nowTime"));
+
+			t = setTimeout("timedCount()", 50)
+
+		}
+		timedCount();
+
+		// 弹幕开始
+		$('#danmu').danmu('danmuResume');
+
+
+		function starter() {
+			$('#danmu').danmu('danmuStart');
+		}
+
+		function pauser() {
+			$('#danmu').danmu('danmuPause');
+		}
+		// function resumer(){
+		//   $('#danmu').danmu('danmuResume');
+		// }
+		function stoper() {
+			$('#danmu').danmu('danmuStop');
+		}
+
+		function getime() {
+			alert($('#danmu').data("nowTime"));
+		}
+
+		function getpaused() {
+			alert($('#danmu').data("paused"));
+		}
+		//添加弹幕测试  这个函数没有调用
+		function add() {
+			var newd = {
+				"text": "new2",
+				"color": "green",
+				"size": "1",
+				"position": "0",
+				"time": 60
+			};
+			$('#danmu').danmu("addDanmu", newd);
+		}
+		//向后端添加弹幕测试  这个函数没有调用
+		function insert() {
+			var newd = {
+				"text": "new2",
+				"color": "green",
+				"size": "1",
+				"position": "0",
+				"time": 50
+			};
+			str_newd = JSON.stringify(newd);
+			$.post("stone.php", {
+				danmu: str_newd
+			}, function (data, status) {
+				alert(data)
+			});
+		}
+		//从后端获取到弹幕并添加
+		function query() {
+			$.get("query.php", function (data, status) {
+				var danmu_from_sql = eval(data);
+				for (var i = 0; i < danmu_from_sql.length; i++) {
+					var danmu_ls = eval('(' + danmu_from_sql[i] + ')');
+					$('#danmu').danmu("addDanmu", danmu_ls);
+				}
+			});
+		}
+
+		//回车事件绑定
+		$('#text').bind('keyup', function (event) {
+			if (event.keyCode == "13") {
+				//回车执行
+				send();
+			}
+		});
+
+		//发送弹幕，使用了文档README.md第7节中推荐的方法
+		function send() {
+			var text = document.getElementById('text').value;
+			var color = document.getElementById('color').value;
+			var position = document.getElementById('position').value;
+			var time = $('#danmu').data("nowTime") + 1;
+			var size = document.getElementById('text_size').value;
+			var text_obj = '{ "text":"' + text + '","color":"' + color + '","size":"' + size + '","position":"' +
+				position +
+				'","time":' + time + '}';
+			$.post("stone.php", {
+				danmu: text_obj
+			});
+			var text_obj = '{ "text":"' + text + '","color":"' + color + '","size":"' + size + '","position":"' +
+				position +
+				'","time":' + time + ',"isnew":""}';
+			var new_obj = eval('(' + text_obj + ')');
+			$('#danmu').danmu("addDanmu", new_obj);
+			document.getElementById('text').value = '';
+		}
+		//调整透明度函数
+		function op() {
+			var op = document.getElementById('op').value;
+			$('#danmu').danmu("setOpacity", op / 100);
+		}
+
+		//调隐藏 显示
+		function changehide() {
+			var op = document.getElementById('op').value;
+			op = op / 100;
+			if (document.getElementById("ishide").checked) {
+				$("#danmu").danmu("setOpacity", 1)
+			} else {
+				$("#danmu").danmu("setOpacity", 0)
+
+			}
+		}
+
+		//设置弹幕时间
+		function settime() {
+			var t = document.getElementById("set_time").value;
+			t = parseInt(t)
+			$('#danmu').danmu("setTime", t);
+		}
+	</script>
+</body>
+
+</html>
